@@ -1862,6 +1862,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -1904,10 +1913,39 @@ __webpack_require__.r(__webpack_exports__);
       })["catch"](function (error) {
         console.log(error);
       });
-      return;
     },
     updateContact: function updateContact(id) {
       console.log('Updating contact...' + id);
+      var self = this;
+      var params = Object.assign({}, self.contact);
+      axios.patch('api/contacts/' + id, params).then(function () {
+        self.contact.name = '';
+        self.contact.email = '';
+        self.contact.phone = '';
+        self.edit = false;
+        self.fetchContactList();
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    showContact: function showContact(id) {
+      var self = this;
+      axios.get('api/contacts/' + id).then(function (response) {
+        self.contact.id = response.data.id;
+        self.contact.name = response.data.name;
+        self.contact.email = response.data.email;
+        self.contact.phone = response.data.phone;
+      });
+      self.edit = true;
+    },
+    deleteContact: function deleteContact(id) {
+      console.log('Deleting contact..' + id);
+      var self = this;
+      axios["delete"]('api/contact/' + id).then(function (response) {
+        self.fetchContactList();
+      })["catch"](function (error) {
+        console.log(error);
+      });
     }
   }
 });
@@ -37307,7 +37345,7 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _c("h1", [_vm._v("Contacts")]),
+    _c("h1", [_vm._v("Add Contacts")]),
     _vm._v(" "),
     _c(
       "form",
@@ -37435,6 +37473,51 @@ var render = function() {
           )
         ])
       ]
+    ),
+    _vm._v(" "),
+    _c("h1", [_vm._v("Contacts")]),
+    _vm._v(" "),
+    _c(
+      "ul",
+      { staticClass: "list-group" },
+      _vm._l(_vm.list, function(contact) {
+        return _c("li", { staticClass: "list-group-item" }, [
+          _c("strong", [_vm._v(_vm._s(contact.name))]),
+          _vm._v(
+            " " +
+              _vm._s(contact.email) +
+              " " +
+              _vm._s(contact.phone) +
+              "\n            "
+          ),
+          _c(
+            "button",
+            {
+              staticClass: "btn btn-info btn-sm",
+              on: {
+                click: function($event) {
+                  return _vm.showContact(contact.id)
+                }
+              }
+            },
+            [_vm._v("Edit")]
+          ),
+          _vm._v(" "),
+          _c(
+            "button",
+            {
+              staticClass: "btn btn-danger btn-sm",
+              on: {
+                click: function($event) {
+                  return _vm.deleteContact(contact.id)
+                }
+              }
+            },
+            [_vm._v("Delete")]
+          )
+        ])
+      }),
+      0
     )
   ])
 }

@@ -39,7 +39,7 @@ Route::patch('contacts/{id}', function(Request $request, $id){
 });
 
 Route::delete('contact/{id}', function($id){
-    return Contact::delete($id);
+    return Contact::destroy($id);
 });
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {

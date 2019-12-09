@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1>Contacts</h1>
+        <h1>Add Contacts</h1>
         <form action="#" @submit.prevent="edit ? updateContact(contact.id) : createContact()">
             <div class="form-group">
                 <label for="name">Name</label>
@@ -19,7 +19,16 @@
                 <button v-show="edit" type="submit" name="button" class="btn btn-primary">Update Contact</button>
             </div>
         </form>
+        <h1>Contacts</h1>
+        <ul class="list-group">
+            <li v-for="contact in list" class="list-group-item">
+                <strong>{{ contact.name }}</strong> {{ contact.email }} {{ contact.phone }}
+                <button @click="showContact(contact.id)" class="btn btn-info btn-sm">Edit</button>
+                <button @click="deleteContact(contact.id)" class="btn btn-danger btn-sm">Delete</button>
+            </li>
+        </ul>
     </div>
+    
 </template>
 
 <script>
@@ -69,10 +78,49 @@
                         console.log(error);
                     });
 
-                return;
             },
             updateContact: function(id){
                 console.log('Updating contact...'+id);
+
+                let self = this;
+                let params = Object.assign({},self.contact);
+                
+                axios.patch('api/contacts/' + id, params)
+                    .then(function(){
+                        self.contact.name = '';
+                        self.contact.email = '';
+                        self.contact.phone = '';
+                        self.edit = false;
+                        self.fetchContactList();
+                    })
+                    .catch(function(error){
+                        console.log(error);
+                    });
+
+            },
+            showContact: function(id){
+                let self = this;
+                axios.get('api/contacts/' + id)
+                    .then(function(response) {
+                        self.contact.id = response.data.id;
+                        self.contact.name = response.data.name;
+                        self.contact.email = response.data.email;
+                        self.contact.phone = response.data.phone;
+                    })
+                self.edit = true;
+            },
+            deleteContact: function(id){
+                console.log('Deleting contact..' + id);
+
+                let self = this;
+
+                axios.delete('api/contact/' + id)
+                    .then(function(response){
+                        self.fetchContactList();
+                    })
+                    .catch(function(error){
+                        console.log(error);
+                    })
             }
         }
     }
