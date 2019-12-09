@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
-use Models\Contact;
+use App\Models\Contact;
 
 /*
 |--------------------------------------------------------------------------

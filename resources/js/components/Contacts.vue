@@ -26,7 +26,7 @@
     export default {
         data: function(){
             return {
-                edit: true,
+                edit: false,
                 list: [],
                 contact: {
                     id: '',
@@ -38,10 +38,38 @@
         },
         mounted: function(){
             console.log('Contacts components loaded....');
+            this.fetchContactList();
         },
         methods: {
+            fetchContactList: function(){
+                console.log('Fetching contacts...');
+                axios.get('api/contacts')
+                    .then((response) => {
+                        console.log(response.data);
+                        this.list = response.data;
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            },
             createContact: function(){
                 console.log('Creating contact...');
+                let self = this;
+                let params = Object.assign({},self.contact);
+                
+                axios.post('api/contacts/store', params)
+                    .then(function(){
+                        self.contact.name = '';
+                        self.contact.email = '';
+                        self.contact.phone = '';
+                        self.edit = false;
+                        self.fetchContactList();
+                    })
+                    .catch(function(error){
+                        console.log(error);
+                    });
+
+                return;
             },
             updateContact: function(id){
                 console.log('Updating contact...'+id);
